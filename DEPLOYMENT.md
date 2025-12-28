@@ -2,6 +2,15 @@
 
 This comprehensive guide will help you deploy the Motion Weather App with the frontend on Vercel and the backend on Render.
 
+## � Quickq Fix for Vercel Environment Variable Error
+
+If you're getting the error: `Environment Variable "VITE_API_BASE_URL" references Secret "vite_api_base_url", which does not exist`
+
+**Solution:**
+1. The `vercel.json` file has been updated to remove the problematic reference
+2. Set environment variables through Vercel Dashboard instead (instructions below)
+3. Redeploy your application after setting the environment variable
+
 ## 📋 Prerequisites
 
 - GitHub account with your project repository
@@ -117,12 +126,28 @@ export const API_BASE_URL = config[import.meta.env.MODE] || config.development
    Install Command: npm install
    ```
 
-4. **Set Environment Variables**
+4. **Set Environment Variables (IMPORTANT)**
    
-   In Vercel dashboard, go to Settings → Environment Variables:
-   ```env
-   VITE_API_BASE_URL=https://your-render-backend-url.onrender.com
+   **Before deploying**, you need to set up environment variables:
+   
+   a) In the import screen, scroll down to "Environment Variables"
+   b) Click "Add Environment Variable"
+   c) Add the following:
+   
    ```
+   Name: VITE_API_BASE_URL
+   Value: https://your-render-backend-url.onrender.com
+   ```
+   
+   **OR after deployment:**
+   - Go to your project Settings → Environment Variables
+   - Click "Add New"
+   - Name: `VITE_API_BASE_URL`
+   - Value: `https://your-render-backend-url.onrender.com`
+   - Environment: Production, Preview, Development (select all)
+   - Click "Save"
+
+   **⚠️ Important:** Replace `your-render-backend-url` with your actual Render service URL from Step 1!
 
 ### Step 3: Deploy
 
@@ -209,6 +234,42 @@ Open browser DevTools → Network tab and verify:
 1. Update CORS settings in `server/index.js` with your Vercel URL
 2. Redeploy backend to Render
 3. Clear browser cache and test again
+
+#### � VPercel Environment Variable Issues
+
+**Problem:** `Environment Variable "VITE_API_BASE_URL" references Secret "vite_api_base_url", which does not exist`
+
+**Solution:**
+1. **Remove the problematic vercel.json env reference** (already fixed in the repo)
+2. **Set environment variables through Vercel Dashboard:**
+   - Go to your Vercel project dashboard
+   - Navigate to Settings → Environment Variables
+   - Click "Add New"
+   - Name: `VITE_API_BASE_URL`
+   - Value: `https://your-render-url.onrender.com`
+   - Environment: Select all (Production, Preview, Development)
+   - Click "Save"
+
+3. **Redeploy your application:**
+   - Go to Deployments tab
+   - Click "Redeploy" on the latest deployment
+   - Or push a new commit to trigger automatic deployment
+
+**Alternative Method - Using Vercel CLI:**
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Login to Vercel
+vercel login
+
+# Set environment variable
+vercel env add VITE_API_BASE_URL production
+# Enter your Render URL when prompted
+
+# Redeploy
+vercel --prod
+```
 
 #### 🔌 API Connection Issues
 **Problem:** Frontend can't connect to backend
