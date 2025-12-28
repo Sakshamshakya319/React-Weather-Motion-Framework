@@ -110,16 +110,16 @@ const SearchBar = ({ onSearch, loading }) => {
 
   return (
     <motion.div 
-      className="glass-effect p-8 relative"
+      className="glass-effect p-4 sm:p-8 relative"
       whileHover={{ scale: 1.01 }}
       transition={{ type: "spring", stiffness: 300 }}
     >
-      <h2 className="text-2xl font-display font-bold mb-6 gradient-text text-center">
+      <h2 className="text-xl sm:text-2xl font-display font-bold mb-4 sm:mb-6 gradient-text text-center">
         🔍 Search Weather by City
       </h2>
       
-      <form onSubmit={handleSubmit} className="flex gap-4 mb-6">
-        <div className="flex-1 relative">
+      <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
+        <div className="relative">
           <input
             ref={inputRef}
             type="text"
@@ -128,7 +128,7 @@ const SearchBar = ({ onSearch, loading }) => {
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
             placeholder="Enter city name (e.g., Mumbai, New York, London)"
-            className="input-field text-lg"
+            className="input-field text-lg w-full"
             disabled={loading}
             autoComplete="off"
           />
@@ -186,24 +186,27 @@ const SearchBar = ({ onSearch, loading }) => {
         <motion.button
           type="submit"
           disabled={loading || !city.trim()}
-          className="btn-primary px-8 text-lg"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          className="btn-primary w-full sm:w-auto sm:px-8 text-lg py-4 sm:py-3"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
         >
           {loading ? (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center gap-3">
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
               Searching...
             </div>
           ) : (
-            '🔍 Search'
+            <div className="flex items-center justify-center gap-2">
+              <span>🔍</span>
+              <span>Search Weather</span>
+            </div>
           )}
         </motion.button>
       </form>
       
       <div className="text-center">
         <p className="text-muted mb-4 font-medium">Popular Cities:</p>
-        <div className="flex flex-wrap justify-center gap-3">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap sm:justify-center gap-2 sm:gap-3">
           {[
             { name: 'Mumbai', country: 'India', flag: '🇮🇳' },
             { name: 'Delhi', country: 'India', flag: '🇮🇳' },
@@ -220,7 +223,7 @@ const SearchBar = ({ onSearch, loading }) => {
                 setCity(`${suggestedCity.name}, ${suggestedCity.country}`)
                 onSearch(`${suggestedCity.name}, ${suggestedCity.country}`)
               }}
-              className="px-4 py-2 text-sm rounded-full font-medium transition-all duration-300 flex items-center gap-2"
+              className="px-3 py-2 sm:px-4 text-sm rounded-full font-medium transition-all duration-300 flex items-center justify-center gap-2 min-h-[40px]"
               style={{
                 background: 'rgba(255, 255, 255, 0.1)',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -233,8 +236,8 @@ const SearchBar = ({ onSearch, loading }) => {
               whileTap={{ scale: 0.95 }}
               disabled={loading}
             >
-              <span>{suggestedCity.flag}</span>
-              <span>{suggestedCity.name}</span>
+              <span className="text-base sm:text-lg">{suggestedCity.flag}</span>
+              <span className="text-xs sm:text-sm font-medium">{suggestedCity.name}</span>
             </motion.button>
           ))}
         </div>
