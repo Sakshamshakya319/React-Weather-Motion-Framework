@@ -74,9 +74,41 @@ PORT=10000
 1. Click "Create Web Service"
 2. Wait for the build and deployment (usually 2-5 minutes)
 3. Once deployed, note your Render URL: `https://motion-weather-backend-xyz.onrender.com`
-4. Test the health endpoint: `https://your-render-url.onrender.com/api/health`
 
-Expected response:
+4. **Test your backend endpoints:**
+
+   **Root endpoint (should show API info):**
+   ```
+   https://your-render-url.onrender.com/
+   ```
+   
+   **Health check:**
+   ```
+   https://your-render-url.onrender.com/api/health
+   ```
+
+Expected responses:
+
+**Root endpoint (`/`):**
+```json
+{
+  "message": "Motion Weather API",
+  "version": "1.0.0",
+  "status": "Running",
+  "endpoints": {
+    "health": "/api/health",
+    "weather": {
+      "city": "/api/weather/city?city=London",
+      "coordinates": "/api/weather/coordinates?lat=40.7128&lon=-74.0060",
+      "forecast": "/api/weather/forecast?city=Paris"
+    },
+    "search": "/api/cities/search?q=New York"
+  },
+  "timestamp": "2024-01-01T12:00:00.000Z"
+}
+```
+
+**Health endpoint (`/api/health`):**
 ```json
 {
   "status": "OK",
@@ -167,6 +199,7 @@ app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? [
         'https://your-vercel-app.vercel.app',
+        /\.vercel\.app$/,  // Allow any vercel.app subdomain
         'https://your-custom-domain.com' // if you have one
       ]
     : ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:5174'],
@@ -226,6 +259,56 @@ Open browser DevTools → Network tab and verify:
 ## 🛠 Troubleshooting
 
 ### Common Issues and Solutions
+
+#### 🚫 Backend "Cannot GET /" Error
+
+**Problem:** Getting "Cannot GET /" when visiting your Render backend URL
+
+**Solutions:**
+
+1. **Check if the server is running:**
+   - Go to your Render dashboard
+   - Check if the service status is "Live" (green)
+   - If it shows "Build failed" or "Deploy failed", check the logs
+
+2. **Verify the root endpoint:**
+   - The server now has a root route that shows API information
+   - Visit: `https://your-render-url.onrender.com/`
+   - You should see JSON with API endpoints and status
+
+3. **Test specific API endpoints:**
+   ```bash
+   # Health check
+   curl https://your-render-url.onrender.com/api/health
+   
+   # Weather test
+   curl "https://your-render-url.onrender.com/api/weather/coordinates?lat=40.7128&lon=-74.0060"
+   ```
+
+4. **Check Render logs:**
+   - Go to Render dashboard → Your service → Logs tab
+   - Look for error messages or startup issues
+   - Common issues:
+     - Port binding errors
+     - Missing dependencies
+     - Environment variable issues
+
+5. **Verify build configuration:**
+   ```
+   Build Command: npm install
+   Start Command: npm start
+   Root Directory: server
+   ```
+
+6. **Check package.json in server folder:**
+   ```json
+   {
+     "scripts": {
+       "start": "node index.js"
+     },
+     "type": "module"
+   }
+   ```
 
 #### 🚫 CORS Errors
 **Problem:** `Access to fetch at 'https://render-url' from origin 'https://vercel-url' has been blocked by CORS policy`

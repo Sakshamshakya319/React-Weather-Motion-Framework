@@ -11,7 +11,13 @@ const PORT = process.env.PORT || 3001
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-vercel-app.vercel.app', 'https://weather-app-3d.vercel.app']
+    ? [
+        'https://motion-weather-app.vercel.app',
+        'https://weather-app-3d.vercel.app',
+        /\.vercel\.app$/,  // Allow any vercel.app subdomain
+        'http://localhost:5173',
+        'http://localhost:3000'
+      ]
     : ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:5174'],
   credentials: true
 }))
@@ -509,6 +515,26 @@ app.get('/api/weather/forecast', async (req, res) => {
 
     res.status(500).json({ message: 'Failed to fetch forecast data' })
   }
+})
+
+// Root route - API information
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Motion Weather API',
+    version: '1.0.0',
+    status: 'Running',
+    endpoints: {
+      health: '/api/health',
+      weather: {
+        city: '/api/weather/city?city=London',
+        coordinates: '/api/weather/coordinates?lat=40.7128&lon=-74.0060',
+        forecast: '/api/weather/forecast?city=Paris'
+      },
+      search: '/api/cities/search?q=New York'
+    },
+    documentation: 'https://github.com/yourusername/motion-weather-app',
+    timestamp: new Date().toISOString()
+  })
 })
 
 // Health check endpoint
